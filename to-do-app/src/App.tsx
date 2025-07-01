@@ -1,16 +1,16 @@
+import { Outlet } from 'react-router'
 import './App.css'
-import { Button } from './components/ui/button'
+import Navbar from './components/layout/Navbar'
 
 function App() {
 
 
   return (
     <>
-      <div>
-        <h1>Basic to do app</h1>
-        <Button>Button</Button>
-      </div>
+       <Navbar></Navbar>
+      <Outlet></Outlet>
     </>
+
   )
 }
 
