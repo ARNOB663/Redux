@@ -9,28 +9,44 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Form, FormControl,  FormField, FormItem, FormLabel, } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { useAppDispatch } from "@/redux/hooks"
+import { addTask } from "@/redux/features/task/taskSlice"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 interface TaskFormData {
-  title: string;
+  title: string; 
   description: string;
-  priority: string;
+  priority: "High" | "Medium" | "Low";
+  dueDate: Date;
 }
 
 export function AddTaskModal() {
 
    const form = useForm<TaskFormData>();
 
+   const dispatch = useAppDispatch()
+
    const onSubmit = (data: TaskFormData) => {
     console.log(data)
+    
+    const newTask = {
+      id: crypto.randomUUID(),
+      title: data.title,
+      description: data.description,
+      priority: data.priority,
+      dueDate: data.dueDate.toISOString(),
+      isCompleted: false
+    }
+    
+    dispatch(addTask(newTask))
    }
 
   return (
@@ -93,7 +109,7 @@ export function AddTaskModal() {
              
             <FormField
           control={form.control}
-          name="dob"
+          name="dueDate"
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Due Date</FormLabel>
@@ -121,9 +137,9 @@ export function AddTaskModal() {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    // disabled={(date) =>
-                    //   date > new Date() || date < new Date("1900-01-01")
-                    // }
+                    disabled={(date) =>
+                      date < new Date(new Date().setHours(0, 0, 0, 0))
+                    }
                     captionLayout="dropdown"
                   />
                 </PopoverContent>
